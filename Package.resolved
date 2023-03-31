@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "fluent-sqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/fluent-sqlite.git",
+      "state" : {
+        "revision" : "60d01964a8768bde8116a2c66110da080b51e9f6",
+        "version" : "4.3.1"
+      }
+    },
+    {
       "identity" : "jwt",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/jwt.git",
@@ -115,6 +124,24 @@
       "state" : {
         "revision" : "fcc29f543b3de7b661cbe7540805974234cb9740",
         "version" : "3.24.0"
+      }
+    },
+    {
+      "identity" : "sqlite-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/sqlite-kit.git",
+      "state" : {
+        "revision" : "76da703f89f1dc92f05da79782ebc44c52f17453",
+        "version" : "4.2.1"
+      }
+    },
+    {
+      "identity" : "sqlite-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/sqlite-nio.git",
+      "state" : {
+        "revision" : "a22db45a3418a067a61551a9cd0959cc0a7bf3dc",
+        "version" : "1.4.3"
       }
     },
     {

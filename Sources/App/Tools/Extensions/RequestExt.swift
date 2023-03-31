@@ -1,5 +1,7 @@
-import JWT
 import Vapor
+import Fluent
+//import FluentSQLite
+import JWT
 
 extension Request {
     

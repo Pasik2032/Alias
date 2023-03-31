@@ -1,66 +1,32 @@
-//import Fluent
-//import Vapor
-//
-//struct TodoController: RouteCollection {
-//    func boot(routes: RoutesBuilder) throws {
-//        let todos = routes.grouped("todos")
-//        todos.get(use: index)
-//        todos.post(use: create)
-//        todos.group(":todoID") { todo in
-//            todo.delete(use: delete)
-//        }
-//    }
-//
-//    func index(req: Request) async throws -> [Todo] {
-//        try await Todo.query(on: req.db).all()
-//    }
-//
-//    func create(req: Request) async throws -> Todo {
-//        let todo = try req.content.decode(Todo.self)
-//        try await todo.save(on: req.db)
-//        return todo
-//    }
-//
-//    func delete(req: Request) async throws -> HTTPStatus {
-//        guard let todo = try await Todo.find(req.parameters.get("todoID"), on: req.db) else {
-//            throw Abort(.notFound)
-//        }
-//        try await todo.delete(on: req.db)
-//        return .noContent
-//    }
-//}
-
 import Vapor
+import Fluent
+//import FluentSQLite
+import JWT
 
 final class TodoController {
     
-    fileprivate var todoService: TodoService
-    
-    init(todoService: TodoService) {
-        self.todoService = todoService
-    }
-    
-    func fetch(_ req: Request) throws -> Future<[TodoDto]> {
-        return try self.todoService.fetch(request: req)
+    func index(_ req: Request) throws -> Future<[Todo]> {
+        return Todo.query(on: req).all()
     }
 
-    func create(_ req: Request, todoDto: TodoDto) throws -> Future<TodoDto> {
-        return try self.todoService.create(request: req, todoDto: todoDto)
+    func create(_ req: Request) throws -> Future<Todo> {
+        return try req.content.decode(Todo.self).flatMap { todo in
+            return todo.save(on: req)
+        }
     }
 
-    func delete(_ req: Request) throws -> Future<TodoDto> {
-        let todoID = try req.parameters.next(Int.self)
-        return try self.todoService.delete(request: req, todoID: todoID)
+    func delete(_ req: Request) throws -> Future<HTTPStatus> {
+        return try req.parameters.next(Todo.self).flatMap { todo in
+            return todo.delete(on: req)
+        }.transform(to: .ok)
     }
 }
 
 extension TodoController: RouteCollection {
     
     func boot(router: Router) throws {
-        let group = router.grouped("v1/todo").grouped(JWTMiddleware())
-        
-        group.post(TodoDto.self, use: self.create)
-        group.get(use: self.fetch)
-        group.delete(Int.parameter, use: self.delete)
+        router.get("todos", use: self.index)
+        router.post("todos", use: self.create)
+        router.delete("todos", Todo.parameter, use: self.delete)
     }
 }

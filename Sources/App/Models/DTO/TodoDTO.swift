@@ -1,4 +1,6 @@
+import JWT
 import Vapor
+import Fluent
 
 struct TodoDto: Content {
     

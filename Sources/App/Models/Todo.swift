@@ -1,19 +1,30 @@
-import Fluent
+import JWT
 import Vapor
+import Fluent
 
-final class Todo: Model, Content {
-    static let schema = "todos"
+final class Todo: SQLiteModel {
     
-    @ID(key: .id)
-    var id: UUID?
-
-    @Field(key: "title")
+    var id: Int?
     var title: String
+    var userID: User.ID
 
-    init() { }
-
-    init(id: UUID? = nil, title: String) {
+    /// Creates a new `Todo`.
+    init(id: Int? = nil, title: String, userID: User.ID) {
         self.id = id
         self.title = title
+        self.userID = userID
     }
 }
+
+extension Todo {
+    
+    var user: Parent<Todo, User> {
+        return self.parent(\.userID)
+    }
+}
+
+extension Todo: Migration { }
+
+extension Todo: Content { }
+
+extension Todo: Parameter { }

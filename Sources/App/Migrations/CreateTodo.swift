@@ -1,4 +1,7 @@
+import Vapor
 import Fluent
+//import FluentSQLite
+import JWT
 
 struct CreateTodo: AsyncMigration {
     func prepare(on database: Database) async throws {
