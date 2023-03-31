@@ -1,3 +1,6 @@
+import JWT
+import Vapor
+
 func signIn(request: Request, user: User) throws -> Future<AccessDto> {
     return User
         .query(on: request)
