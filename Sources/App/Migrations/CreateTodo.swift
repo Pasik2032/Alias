@@ -1,6 +1,6 @@
 import Vapor
 import Fluent
-//import FluentSQLite
+import FluentSQLiteDriver
 import JWT
 
 struct CreateTodo: AsyncMigration {

@@ -2,6 +2,7 @@ import Vapor
 import Fluent
 //import FluentSQLite
 import JWT
+import FluentSQLiteDriver
 
 enum JWTConfig {
     static let signerKey = "JWT_API_SIGNER_KEY" // Key for signing JWT Access Token

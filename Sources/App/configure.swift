@@ -3,6 +3,7 @@ import FluentPostgresDriver
 import Vapor
 //import FluentSQLite
 import JWT
+import FluentSQLiteDriver
 
 // configures your application
 public func configure(_ app: Application) throws {

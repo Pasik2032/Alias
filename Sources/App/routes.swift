@@ -17,6 +17,7 @@ import Vapor
 import Fluent
 //import FluentSQLite
 import JWT
+import FluentSQLiteDriver
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {

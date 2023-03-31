@@ -2,6 +2,7 @@ import JWT
 import Fluent
 import Vapor
 //import FluentSQLite
+import FluentSQLiteDriver
 
 
 func signIn(request: Request, user: User) throws -> Future<AccessDto> {
