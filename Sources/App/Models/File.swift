@@ -9,7 +9,7 @@ import Foundation
 import JWTKit
 import Vapor
 
-struct User: JWTPayload {
+struct Userr: JWTPayload {
 
   static var users: [User] = []
 
