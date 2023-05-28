@@ -11,14 +11,18 @@ import FluentKit
 
 final class WaitRoom: Model {
 
+  var socketFolow: [SocketUser] = []
+
   struct Public: Content {
+    let id: UUID
     let name: String
     let teamsCount: Int
   }
 
   func asPublic(db: Database) async -> Public {
     let count = await (try? $teams.get(on: db).count) ?? 0
-    return Public(name: name, teamsCount: count)
+    let id = try! requireID()
+    return Public(id: id, name: name, teamsCount: count)
   }
 
   struct DetailModel: Content {

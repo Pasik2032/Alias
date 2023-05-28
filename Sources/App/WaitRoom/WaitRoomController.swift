@@ -52,7 +52,23 @@ struct WaitRoomController: RouteCollection {
         break
       }
     }
-    return try await getDetailRoom(uuid: room.requireID(), db: req.db, user: user)
+
+//    let u = try? await room.$admin.get(on: req.db)
+//    if u?.id == user.$id.value {
+//      room.
+//    }
+
+
+
+    let newModel = try await getDetailRoom(uuid: id, db: req.db, user: user)
+    if
+      let str = try? JSONEncoder().encode(newModel),
+      let json = String(data: str, encoding: String.Encoding.utf8)
+    {
+      SocketUser.wsRoomsSub[id]?.forEach { $0.ws.send(json) }
+    }
+
+    return newModel
   }
 
   func exitRoom(req: Request) async throws -> String {
@@ -112,7 +128,15 @@ struct WaitRoomController: RouteCollection {
 
     if users.isEmpty {
       try await deleteTeam.delete(on: req.db)
-      return try await getDetailRoom(uuid: id, db: req.db, user: user)
+      let newModel = try await getDetailRoom(uuid: id, db: req.db, user: user)
+      if
+        let str = try? JSONEncoder().encode(newModel),
+        let json = String(data: str, encoding: String.Encoding.utf8)
+      {
+        SocketUser.wsRoomsSub[id]?.forEach { $0.ws.send(json) }
+      }
+
+      return newModel
     } else {
       throw Abort(.badRequest)
     }
@@ -134,7 +158,14 @@ struct WaitRoomController: RouteCollection {
     let team = RoomTeam.create()
     try await room.$teams.create([team], on: req.db)
 
-    return try await getDetailRoom(uuid: id, db: req.db, user: user)
+    let newModel =  try await getDetailRoom(uuid: id, db: req.db, user: user)
+    if
+      let str = try? JSONEncoder().encode(newModel),
+      let json = String(data: str, encoding: String.Encoding.utf8)
+    {
+      SocketUser.wsRoomsSub[id]?.forEach { $0.ws.send(json) }
+    }
+    return newModel
   }
 
   func teamChangeTeam(req: Request) async throws -> WaitRoom.DetailModel {
@@ -164,7 +195,15 @@ struct WaitRoomController: RouteCollection {
     try? await newPlaye.save(on: req.db)
     try? await myPlayer?.delete(on: req.db)
 
-    return try await getDetailRoom(uuid: id, db: req.db, user: user)
+    let newModel = try await getDetailRoom(uuid: id, db: req.db, user: user)
+    if
+      let str = try? JSONEncoder().encode(newModel),
+      let json = String(data: str, encoding: String.Encoding.utf8)
+    {
+      SocketUser.wsRoomsSub[id]?.forEach { $0.ws.send(json) }
+    }
+
+    return newModel
   }
 
 
@@ -183,12 +222,20 @@ struct WaitRoomController: RouteCollection {
     try await player.save(on: req.db)
 
 
-    return try await getDetailRoom(uuid: id, db: req.db, user: user)
+    let newModel = try await getDetailRoom(uuid: id, db: req.db, user: user)
+    if
+      let str = try? JSONEncoder().encode(newModel),
+      let json = String(data: str, encoding: String.Encoding.utf8)
+    {
+      SocketUser.wsRoomsSub[id]?.forEach { $0.ws.send(json) }
+    }
+
+    return newModel
   }
 
   func getOpenRooms(req: Request) async throws -> [WaitRoom.Public] {
     let rooms = (try? await WaitRoom.query(on: req.db).all()) ?? []
-    let openRooms = rooms.filter { !$0.isOpen }
+    let openRooms = rooms.filter { $0.isOpen }
 
     var result: [WaitRoom.Public] = []
     for room in openRooms {
@@ -228,6 +275,17 @@ struct WaitRoomController: RouteCollection {
     try await player.save(on: req.db)
     var dto = await room.asDetail(db: req.db)
     dto.isAdmin = true
+
+    let all = try? await getOpenRooms(req: req)
+    SocketUser.wsAllRooms.forEach {
+
+      if
+        let str = try? JSONEncoder().encode(all),
+        let json = String(data: str, encoding: String.Encoding.utf8)
+      {
+        $0.ws.send(json)
+      }
+    }
     return dto
   }
 
